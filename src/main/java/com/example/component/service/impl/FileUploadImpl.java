@@ -3,6 +3,7 @@ package com.example.component.service.impl;
 import com.example.component.service.FileUploadService;
 import com.example.component.util.Result;
 import com.example.component.util.UUIDUtil;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -56,21 +57,8 @@ public class FileUploadImpl implements FileUploadService {
             e.printStackTrace();
             return Result.fail("上传失败！");
         } finally {
-            //无论成功与否，都有关闭输入输出流
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(outputStream);
         }
     }
 
@@ -83,6 +71,8 @@ public class FileUploadImpl implements FileUploadService {
         }
         // 文件名
         String originalFilename = file.getOriginalFilename();
+        //获取文件类型
+        //String contentType = file.getContentType();
         // 存储路径
         String filePath = path + System.currentTimeMillis() + originalFilename;
         if(saveFile(filePath, file)){

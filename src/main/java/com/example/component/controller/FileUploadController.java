@@ -24,12 +24,14 @@ public class FileUploadController {
     public Result singleUpload(@RequestParam("file") MultipartFile file){
         return fileUploadService.singleUpload(file);
     }
-
+    
+    //这种方式上传的时间短
     @RequestMapping("/upload2")
     public Result singleUpload2(@RequestParam("file") MultipartFile file){
         return fileUploadService.singleUpload2(file);
     }
 
+    //多文件上传
     @RequestMapping("/multipleUpload")
     public Result multipleUpload(@RequestParam("files") MultipartFile[] files){
         return fileUploadService.multipleUpload(files);
