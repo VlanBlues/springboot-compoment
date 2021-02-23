@@ -8,7 +8,7 @@ spring:
       enabled: true  #设置开启热部署
   servlet:
     multipart:
-      max-file-size: 2MB
+      max-file-size: 102MB
       max-request-size: 10MB
 
 #mybatis plus设置

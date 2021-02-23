@@ -10,7 +10,8 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: Vlan
@@ -71,12 +72,15 @@ public class FileUploadImpl implements FileUploadService {
         }
         // 文件名
         String originalFilename = file.getOriginalFilename();
+        String fileType = "." + originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         //获取文件类型
         //String contentType = file.getContentType();
         // 存储路径
-        String filePath = path + System.currentTimeMillis() + originalFilename;
-        if(saveFile(filePath, file)){
-            return Result.success("上传成功！");
+        String fileName = UUIDUtil.getUUID() + fileType;
+        String fileAbsolutePath = path + fileName;
+        if(saveFile(fileAbsolutePath, file)){
+            String fileRelativePath = "localhost:8089/img/"+fileName;
+            return Result.success("上传成功！",fileRelativePath);
         }else {
             return Result.fail("文件保存失败！");
         }
@@ -88,18 +92,26 @@ public class FileUploadImpl implements FileUploadService {
         if (files.length == 0) {
             return Result.fail("文件为空！");
         }
-        String originalFilename = "";
-        String filePath = "";
+        String originalFilename;
+        String fileAbsolutePath;
+        String fileType;
+        String fileName;
+        String fileRelativePath;
+        List<String> filePathList = new ArrayList<>();
         for (MultipartFile file : files) {
             // 文件名
             originalFilename = file.getOriginalFilename();
+            fileType = "." + originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            fileName = UUIDUtil.getUUID() + fileType;
             // 存储路径
-            filePath = path + System.currentTimeMillis() + originalFilename;
-            if(!saveFile(filePath, file)){
+            fileAbsolutePath = path + fileName;
+            if(!saveFile(fileAbsolutePath, file)){
                 Result.fail("文件保存失败！");
             }
+            fileRelativePath = "localhost:8089/img/"+fileName;
+            filePathList.add(fileRelativePath);
         }
-        return Result.success("上传成功！");
+        return Result.success("上传成功！",filePathList);
     }
 
     private boolean saveFile(String filePath, MultipartFile file) {
